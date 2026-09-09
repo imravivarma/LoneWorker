@@ -39,6 +39,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="0dp"
         app:cardElevation="0dp"
         app:strokeWidth="0dp"
@@ -67,6 +68,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Email"
+                    android:textColor="@color/black"
+                    android:textColorHint="#757575"
                     android:inputType="textEmailAddress"
                     android:paddingStart="0dp"
                     android:paddingEnd="0dp" />
@@ -91,6 +94,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
+                    android:textColor="@color/black"
+                    android:textColorHint="#757575"
                     android:inputType="textPassword"
                     android:paddingStart="0dp"
                     android:paddingEnd="0dp" />
@@ -102,6 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Remember my login on this device"
+                android:textColor="@color/black"
                 app:buttonTint="@color/checkbox_tint" />
 
             <com.google.android.material.button.MaterialButton
