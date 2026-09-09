@@ -22,6 +22,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MenuActivity"
+            android:exported="false"
+            android:label="Menu"
+            android:theme="@style/Theme.LoneWorker" />
+
+        <activity
+            android:name=".LoneTravellerActivity"
+            android:exported="false"
+            android:label="Lone Traveller"
+            android:theme="@style/Theme.LoneWorker" />
+
+        <activity
+            android:name=".SummaryActivity"
+            android:exported="false"
+            android:label="Summary"
+            android:theme="@style/Theme.LoneWorker" />
+
+        <activity
+            android:name=".StatusActivity"
+            android:exported="false"
+            android:label="Status"
+            android:theme="@style/Theme.LoneWorker" />
     </application>
 
 </manifest>
