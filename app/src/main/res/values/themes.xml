@@ -9,5 +9,9 @@
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- Input Field Dark Mode Support -->
+        <item name="android:editTextColor">@color/input_text_color</item>
+        <item name="android:textColorHint">@color/input_hint_color</item>
     </style>
 </resources>

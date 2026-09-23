@@ -56,7 +56,7 @@ public class SummaryActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirm Lone Worker Submission");
         
-        int batteryLevel =  21; //getBatteryPercentage();
+        int batteryLevel = getBatteryPercentage();
         String message = "Check in interval: " + savedMinutes + " minutes\n" +
                          "Current Battery: " + batteryLevel + "%";
         builder.setMessage(message);

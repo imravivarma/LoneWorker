@@ -10,4 +10,14 @@
     <color name="blue">#FF2196F3</color>
     <color name="yellow">#FFFFEB3B</color>
     <color name="colorYellow">#ffb300</color>
+
+    <!-- Theme aware semantic colors -->
+    <color name="input_text_color">#FF000000</color>
+    <color name="input_hint_color">#757575</color>
+    <color name="input_box_stroke">#BDBDBD</color>
+    <color name="input_box_background">#00000000</color>
+    <color name="card_background">#FFFFFFFF</color>
+    <color name="screen_background">#FFFFFFFF</color>
+    <color name="text_primary">#FF000000</color>
+    <color name="text_secondary">#555555</color>
 </resources>
