@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/screen_background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="How long in minutes do you expect to be travelling?"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:layout_marginBottom="16dp" />
 
@@ -49,17 +49,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.Material3.TextInputLayout.FilledBox"
-            app:boxBackgroundColor="@android:color/transparent"
+            app:boxBackgroundColor="@color/input_box_background"
+            app:boxStrokeColor="@color/input_box_stroke"
             app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="1dp">
+            app:boxStrokeWidthFocused="1dp"
+            app:hintTextColor="@color/input_hint_color">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/travelMinutesInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Minutes"
-                android:textColor="@color/black"
-                android:textColorHint="#757575"
+                android:textColor="@color/input_text_color"
+                android:textColorHint="@color/input_hint_color"
                 android:inputType="number"
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp" />

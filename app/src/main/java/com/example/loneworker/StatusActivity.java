@@ -1,17 +1,24 @@
 package com.example.loneworker;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.GnssStatus;
+import android.location.LocationManager;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -28,11 +35,14 @@ import org.json.JSONObject;
 public class StatusActivity extends AppCompatActivity {
     private TextView nextCheckInText;
     private TextView lastCheckInText;
+    private TextView drainStatusText;
     private int intervalMinutes = 0;
     private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy hh:mm:ss a", Locale.US);
     
     private final Set<Integer> alertedThresholds = new HashSet<>();
-    
+    private LocationManager locationManager;
+    private GnssStatus.Callback gnssCallback;
+
     private final BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -62,8 +72,12 @@ public class StatusActivity extends AppCompatActivity {
 
         nextCheckInText = findViewById(R.id.nextCheckInText);
         lastCheckInText = findViewById(R.id.lastCheckInText);
+        drainStatusText = findViewById(R.id.drainStatusText);
         LinearLayout checkInAction = findViewById(R.id.checkInAction);
         LinearLayout checkOutAction = findViewById(R.id.checkOutAction);
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        setupGnssMonitoring();
 
         loadInterval();
         updateTimes();
@@ -86,16 +100,61 @@ public class StatusActivity extends AppCompatActivity {
         });
     }
 
+    private void setupGnssMonitoring() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            gnssCallback = new GnssStatus.Callback() {
+                @Override
+                public void onSatelliteStatusChanged(@NonNull GnssStatus status) {
+                    int satelliteCount = status.getSatelliteCount();
+                    int strongSignals = 0;
+                    for (int i = 0; i < satelliteCount; i++) {
+                        if (status.getCn0DbHz(i) >= 30.0) { // 30 dB-Hz is generally considered a decent signal
+                            strongSignals++;
+                        }
+                    }
+
+                    // If less than 4 satellites have a strong signal, GPS radio works harder
+                    if (satelliteCount > 0 && strongSignals < 3) {
+                        updateDrainStatus(true);
+                    } else {
+                        updateDrainStatus(false);
+                    }
+                }
+            };
+        }
+    }
+
+    private void updateDrainStatus(boolean isHighDrain) {
+        runOnUiThread(() -> {
+            if (isHighDrain) {
+                drainStatusText.setText("Battery Drain: HIGH (Weak GPS Signal)");
+                drainStatusText.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+            } else {
+                drainStatusText.setText("Battery Drain: Normal");
+                drainStatusText.setTextColor(getResources().getColor(R.color.teal_700));
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && gnssCallback != null) {
+                locationManager.registerGnssStatusCallback(gnssCallback, null);
+            }
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         unregisterReceiver(batteryReceiver);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && gnssCallback != null) {
+            locationManager.unregisterGnssStatusCallback(gnssCallback);
+        }
     }
 
     private void checkBatteryThresholds(int batteryPct, boolean isCharging) {

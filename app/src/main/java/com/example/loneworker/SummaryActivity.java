@@ -56,14 +56,24 @@ public class SummaryActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirm Lone Worker Submission");
         
-        int batteryLevel = 19; // getBatteryPercentage();
+        int batteryLevel = getBatteryPercentage();
         String message = "Check in interval: " + savedMinutes + " minutes\n" +
                          "Current Battery: " + batteryLevel + "%";
         builder.setMessage(message);
         
         builder.setPositiveButton("CONFIRM", (dialog, which) -> {
+            int requestedMinutes = 0;
+            try {
+                requestedMinutes = Integer.parseInt(savedMinutes);
+            } catch (Exception e) {}
+
+            // Conservative estimate: 1% battery lasts ~5 minutes during active tracking
+            int estimatedMinutesRemaining = batteryLevel * 5;
+
             if (batteryLevel < 20) {
                 showBatteryWarning(batteryLevel);
+            } else if (requestedMinutes > estimatedMinutesRemaining) {
+                showLongevityWarning(batteryLevel, requestedMinutes, estimatedMinutesRemaining);
             } else {
                 proceedToStatus();
             }
@@ -73,6 +83,19 @@ public class SummaryActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void showLongevityWarning(int level, int requested, int estimated) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Battery Longevity Warning");
+        String message = String.format(java.util.Locale.US, 
+            "Your battery is at %d%%. Based on your %d minute session, your device may not stay powered for the entire duration (Estimated remaining: ~%d mins).\n\nPlease charge your device or reduce the session duration.", 
+            level, requested, estimated);
+        
+        builder.setMessage(message);
+        builder.setPositiveButton("PROCEED ANYWAY", (dialog, which) -> proceedToStatus());
+        builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 
     private int getBatteryPercentage() {
